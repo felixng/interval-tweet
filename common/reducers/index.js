@@ -1,13 +1,13 @@
 import { combineReducers } from 'redux'
 import {
-  SELECT_SUBREDDIT, INVALIDATE_SUBREDDIT,
+  SELECT_HASHTAG, INVALIDATE_HASHTAG,
   REQUEST_POSTS, RECEIVE_POSTS
 } from '../actions'
 
-function selectedSubreddit(state = 'reactjs', action) {
+function selectedHashtag(state = 'reactjs', action) {
   switch (action.type) {
-  case SELECT_SUBREDDIT:
-    return action.subreddit
+  case SELECT_HASHTAG:
+    return action.hashtag
   default:
     return state
   }
@@ -19,7 +19,7 @@ function posts(state = {
   items: []
 }, action) {
   switch (action.type) {
-    case INVALIDATE_SUBREDDIT:
+    case INVALIDATE_HASHTAG:
       return Object.assign({}, state, {
         didInvalidate: true
       })
@@ -40,13 +40,13 @@ function posts(state = {
   }
 }
 
-function postsBySubreddit(state = { }, action) {
+function postsByHashtag(state = { }, action) {
   switch (action.type) {
-    case INVALIDATE_SUBREDDIT:
+    case INVALIDATE_HASHTAG:
     case RECEIVE_POSTS:
     case REQUEST_POSTS:
       return Object.assign({}, state, {
-        [action.subreddit]: posts(state[action.subreddit], action)
+        [action.hashtag]: posts(state[action.hashtag], action)
       })
     default:
       return state
@@ -54,8 +54,8 @@ function postsBySubreddit(state = { }, action) {
 }
 
 const rootReducer = combineReducers({
-  postsBySubreddit,
-  selectedSubreddit
+  postsByHashtag,
+  selectedHashtag
 })
 
 export default rootReducer

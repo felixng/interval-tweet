@@ -3,6 +3,8 @@
 import path from 'path'
 import Express from 'express'
 import qs from 'qs'
+import Twitter from 'twitter'
+import http from 'http'
 
 import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
@@ -17,7 +19,7 @@ import configureStore from '../common/store/configureStore'
 import AsyncApp from '../common/containers/AsyncApp'
 
 import { fetchCounter } from '../common/api/counter'
-
+import twitterConfig from '../twitter.config'
 const app = new Express()
 const port = 3000
 
@@ -82,3 +84,21 @@ app.listen(port, (error) => {
     console.info(`==> 🌎  Listening on port ${port}. Open up http://localhost:${port}/ in your browser.`)
   }
 })
+
+var twitterClient = new Twitter(twitterConfig);
+var server = http.createServer(app);
+
+var io = require('socket.io').listen(server);
+
+twitterClient.stream('statuses/filter', {
+  track: 'interval%20tweet'
+}, function(stream) {
+  stream.on('data', function(tweet) {
+    // We emit socket events, st the client can listen to them
+    io.emit('tweet', tweet);
+  });
+
+  stream.on('error', function(err) {
+    console.error(err);
+  });
+});

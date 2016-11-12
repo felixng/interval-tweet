@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { selectSubreddit, fetchPostsIfNeeded, invalidateSubreddit } from '../actions'
+import { selectHashtag, fetchPostsIfNeeded, invalidateHashtag } from '../actions'
 // import Picker from '../components/Picker'
 import Posts from '../components/Posts'
 
@@ -12,31 +12,31 @@ class AsyncApp extends Component {
   }
 
   componentDidMount() {
-    const { dispatch, selectedSubreddit } = this.props
-    dispatch(fetchPostsIfNeeded(selectedSubreddit))
+    const { dispatch, selectedHashtag } = this.props
+    dispatch(fetchPostsIfNeeded(selectedHashtag))
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedSubreddit !== this.props.selectedSubreddit) {
-      const { dispatch, selectedSubreddit } = nextProps
-      dispatch(fetchPostsIfNeeded(selectedSubreddit))
+    if (nextProps.selectedHashtag !== this.props.selectedHashtag) {
+      const { dispatch, selectedHashtag } = nextProps
+      dispatch(fetchPostsIfNeeded(selectedHashtag))
     }
   }
 
-  handleChange(nextSubreddit) {
-    this.props.dispatch(selectSubreddit(nextSubreddit))
+  handleChange(nextHashtag) {
+    this.props.dispatch(selectHashtag(nextHashtag))
   }
 
   handleRefreshClick(e) {
     e.preventDefault()
 
-    const { dispatch, selectedSubreddit } = this.props
-    dispatch(invalidateSubreddit(selectedSubreddit))
-    dispatch(fetchPostsIfNeeded(selectedSubreddit))
+    const { dispatch, selectedHashtag } = this.props
+    dispatch(invalidateHashtag(selectedHashtag))
+    dispatch(fetchPostsIfNeeded(selectedHashtag))
   }
 
   render() {
-    const { selectedSubreddit, posts, isFetching, lastUpdated } = this.props
+    const { selectedHashtag, posts, isFetching, lastUpdated } = this.props
     return (
       <div>
         <p>
@@ -70,7 +70,7 @@ class AsyncApp extends Component {
 }
 
 AsyncApp.propTypes = {
-  selectedSubreddit: PropTypes.string.isRequired,
+  selectedHashtag: PropTypes.string.isRequired,
   posts: PropTypes.array.isRequired,
   isFetching: PropTypes.bool.isRequired,
   lastUpdated: PropTypes.number,
@@ -78,18 +78,18 @@ AsyncApp.propTypes = {
 }
 
 function mapStateToProps(state) {
-  const { selectedSubreddit, postsBySubreddit } = state
+  const { selectedHashtag, postsByHashtag } = state
   const {
     isFetching,
     lastUpdated,
     items: posts
-  } = postsBySubreddit[selectedSubreddit] || {
+  } = postsByHashtag[selectedHashtag] || {
     isFetching: true,
     items: []
   }
 
   return {
-    selectedSubreddit,
+    selectedHashtag,
     posts,
     isFetching,
     lastUpdated

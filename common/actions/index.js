@@ -2,50 +2,50 @@ import fetch from 'isomorphic-fetch'
 
 export const REQUEST_POSTS = 'REQUEST_POSTS'
 export const RECEIVE_POSTS = 'RECEIVE_POSTS'
-export const SELECT_SUBREDDIT = 'SELECT_SUBREDDIT'
-export const INVALIDATE_SUBREDDIT = 'INVALIDATE_SUBREDDIT'
+export const SELECT_HASHTAG = 'SELECT_HASHTAG'
+export const INVALIDATE_HASHTAG = 'INVALIDATE_HASHTAG'
 
-export function selectSubreddit(subreddit) {
+export function selectHashtag(hashtag) {
   return {
-    type: SELECT_SUBREDDIT,
-    subreddit
+    type: SELECT_HASHTAG,
+    hashtag
   }
 }
 
-export function invalidateSubreddit(subreddit) {
+export function invalidateHashtag(hashtag) {
   return {
-    type: INVALIDATE_SUBREDDIT,
-    subreddit
+    type: INVALIDATE_HASHTAG,
+    hashtag
   }
 }
 
-function requestPosts(subreddit) {
+function requestPosts(hashtag) {
   return {
     type: REQUEST_POSTS,
-    subreddit
+    hashtag
   }
 }
 
-function receivePosts(subreddit, json) {
+function receivePosts(hashtag, json) {
   return {
     type: RECEIVE_POSTS,
-    subreddit,
+    hashtag,
     posts: json.data.children.map(child => child.data),
     receivedAt: Date.now()
   }
 }
 
-function fetchPosts(subreddit) {
+function fetchPosts(hashtag) {
   return dispatch => {
-    dispatch(requestPosts(subreddit))
-    return fetch(`https://www.reddit.com/r/${subreddit}.json`)
+    dispatch(requestPosts(hashtag))
+    return fetch(`https://www.reddit.com/r/${hashtag}.json`)
       .then(response => response.json())
-      .then(json => dispatch(receivePosts(subreddit, json)))
+      .then(json => dispatch(receivePosts(hashtag, json)))
   }
 }
 
-function shouldFetchPosts(state, subreddit) {
-  const posts = state.postsBySubreddit[subreddit]
+function shouldFetchPosts(state, hashtag) {
+  const posts = state.postsByHashtag[hashtag]
   if (!posts) {
     return true
   } else if (posts.isFetching) {
@@ -55,10 +55,10 @@ function shouldFetchPosts(state, subreddit) {
   }
 }
 
-export function fetchPostsIfNeeded(subreddit) {
+export function fetchPostsIfNeeded(hashtag) {
   return (dispatch, getState) => {
-    if (shouldFetchPosts(getState(), subreddit)) {
-      return dispatch(fetchPosts(subreddit))
+    if (shouldFetchPosts(getState(), hashtag)) {
+      return dispatch(fetchPosts(hashtag))
     }
   }
 }
